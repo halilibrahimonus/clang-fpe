@@ -1,3 +1,18 @@
+# Build artifacts
 *.a
 *.dylib
 src/*.o
+*.so
+/example
+/benchmark
+
+# Local file used for testing
+oneshot.c
+
+# Ignore VSCode settings for the time being
+.vscode/
+.devcontainer/
+
+# Vim temp buffers
+*.swo
+*.swp

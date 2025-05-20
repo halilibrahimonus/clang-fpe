@@ -1,4 +1,4 @@
-CFLAGS := $(shell printenv CFLAGS) -O2 -Wall -fPIC -Wno-deprecated-declarations
+CFLAGS := $(shell printenv CFLAGS) $(shell printenv FPE_CFLAGS) -O2 -Wall -fPIC -Wno-deprecated-declarations
 SO_LINKS = $(shell printenv LDFLAGS) -lm -lcrypto
 
 UNAME := $(shell uname -s)
@@ -10,6 +10,8 @@ endif
 
 EXAMPLE_SRC = example.c
 EXAMPLE_EXE = example
+BENCHMARK_SRC = benchmark.c
+BENCHMARK_EXE = benchmark
 OBJS = src/ff1.o src/ff3.o src/fpe_locl.o
 
 
@@ -44,15 +46,26 @@ else
 	gcc $(CFLAGS) -Wl,-rpath=\$$ORIGIN $(EXAMPLE_SRC) -L. -lfpe $(SO_LINKS) -Isrc -o $@
 endif
 
-test:
-	python test.py
+$(BENCHMARK_EXE): $(BENCHMARK_SRC) $(LIB)
+ifeq ($(UNAME),Darwin)
+	gcc $(CFLAGS) -Wl, $(BENCHMARK_SRC) -L. -lfpe $(SO_LINKS) -Isrc -o $@
+else
+	gcc $(CFLAGS) -Wl,-rpath=\$$ORIGIN $(BENCHMARK_SRC) -L. -lfpe $(SO_LINKS) -Isrc -o $@
+endif
+
+test: $(EXAMPLE_EXE)
+	python3 test.py
 
 # MacOS
 leaks:
+ifeq ($(UNAME),Darwin)
 	leaks -atExit --  ./example EF4359D8D580AA4F7F036D6F04FC6A94 D8E7920AFA330A73 10 890121234567890000
+else
+	valgrind --tool=memcheck --leak-check=full --show-leak-kinds=all ./example EF4359D8D580AA4F7F036D6F04FC6A94 D8E7920AFA330A73 10 890121234567890000
+endif
 
 clean:
-	rm $(OBJS) $(EXAMPLE_EXE) $(LIB)
+	rm $(OBJS) $(EXAMPLE_EXE) $(BENCHMARK_EXE) $(LIB)
 
 install:
 	cp libfpe.so /usr/local/lib
