@@ -36,7 +36,7 @@ export CFLAGS="-I$(brew --prefix openssl)/include"
 export LDFLAGS="-L$(brew --prefix openssl)/lib"
 ```
 Run the example in
-[example.c](https://github.com/0NG/Format-Preserving-Encryption/blob/master/example.c). 
+[example.c](https://github.com/mysto/clang-fpe/blob/master/example.c). 
 
 ```shell
 ./example EF4359D8D580AA4F7F036D6F04FC6A94 D8E7920AFA330A73 10 890121234567890000
@@ -49,14 +49,41 @@ FF1 decrypted:  890121234567890000
 FF3 ciphertext: 750918814058654607
 FF3 decrypted:  890121234567890000
 ```
+
+### Testing
+
 Run the tests
 
-There are official [test vectors](http://csrc.nist.gov/groups/ST/toolkit/examples.html) for both FF1 and FF3 provided by NIST. You can run [test.py](https://github.com/0NG/Format-Preserving-Encryption/blob/master/test.py) with python 3.x.
+There are official [test vectors](http://csrc.nist.gov/groups/ST/toolkit/examples.html) for both FF1 and FF3 provided by NIST. You can run [test.py](https://github.com/mysto/clang-fpe/blob/master/test.py) with python 3.x.
 with a known test vector:
 
 ```shell
 make test
 ```
+
+### Benchmarks
+
+This library makes a simple set of benchmarks available.
+
+```shell
+make benchmark
+./benchmark
+```
+
+### Build Configuration
+
+By default, this library uses 128-bit integers where supported for implementing the FF3 algorithm, and falls back to OpenSSL's [`bn`](https://docs.openssl.org/1.0.2/man3/bn/) library otherwise. This library makes macros available to customize or override this behavior for nonstandard compilers or certain use cases:
+
+ - `FPE_USE_BIGNUM`: always use `bn` for the FF3 algorithm.
+ - `FPE_U128_TYPEDEF=<type>`: define a typedef for an unsigned 128-bit integer to be used by the FF3 algorithm. If set, this will force 128-bit integer mode.
+
+To pass in parameters, set the value of `FPE_CFLAGS`:
+
+```shell
+FPE_CFLAGS='-DFPE_USE_BIGNUM' make
+FPE_CFLAGS='"-DFPE_U128_TYPEDEF=unsigned __int128"' make
+```
+
 ## Example Usage
 
 This implementation is based on OpenSSL's BIGNUM and AES, so you need to install OpenSSL first.

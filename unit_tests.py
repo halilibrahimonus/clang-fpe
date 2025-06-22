@@ -2,6 +2,8 @@
 
 import ctypes
 import unittest
+import platform
+
 
 # Define the FPE_KEY structure
 class FPE_KEY(ctypes.Structure):
@@ -17,7 +19,8 @@ class TestFPE(unittest.TestCase):
     def setUp(self):
 
         # Load the shared library
-        self.fpe_lib = ctypes.CDLL("./libfpe.dylib")
+        is_darwin = platform.system() == 'Darwin'
+        self.fpe_lib = ctypes.CDLL("./libfpe.dylib" if is_darwin else "./libfpe.so")
 
         # Define function signatures
         self.fpe_lib.FPE_ff1_create_key.argtypes = [ctypes.c_char_p, ctypes.c_char_p, ctypes.c_uint]

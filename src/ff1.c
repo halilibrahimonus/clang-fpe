@@ -388,10 +388,6 @@ void FPE_ff1_encrypt(char *plaintext, char *ciphertext, FPE_KEY *key)
                  y[txtlen];
     map_chars(plaintext, x);
 
-    printf("plaintext: ");
-    for (int i = 0; i < txtlen; ++i)    printf("%d", x[i]);
-    printf("\n\n");
-
     FF1_encrypt(x, y, key, key->tweak, txtlen, key->tweaklen);
 
     inverse_map_chars(y, ciphertext, txtlen);

@@ -58,11 +58,11 @@ void map_chars(char str[], unsigned int result[])
     int len = strlen(str);
 
     for (int i = 0; i < len; ++i) {
-        if (str[i] >= 'a')
+        if (str[i] >= 'a' && str[i] <= 'z') 
             result[i] = str[i] - 'a' + 10;
-        else if (str[i] >= 'A')
+        else if (str[i] >= 'A' && str[i] <= 'Z') 
             result[i] = str[i] - 'A' + 36;
-        else
+        else 
             result[i] = str[i] - '0';
     }
 }

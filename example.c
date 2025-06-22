@@ -12,7 +12,7 @@
 
 */
 
-int main(int argc, char *argv[])
+int example(int argc, char *argv[]) 
 {
     if (argc != 5) {
         printf("Usage: %s <key> <tweak> <radix> <plaintext>\n", argv[0]);
@@ -56,4 +56,9 @@ int main(int argc, char *argv[])
     FPE_ff3_delete_key(ff3);
 
     return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    return example(argc, argv);
 }
